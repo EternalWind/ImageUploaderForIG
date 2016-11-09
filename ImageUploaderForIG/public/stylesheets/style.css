@@ -1,0 +1,27 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+a {
+  color: #00b7ff;
+}
+div.img {
+  margin: 20px;
+  float: left;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+}
+img {
+  max-height: 100%;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.img_vertical_alignment_helper {
+  height: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+.clear_float_left {
+  clear: left;
+}

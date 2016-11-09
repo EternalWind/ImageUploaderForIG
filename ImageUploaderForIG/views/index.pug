@@ -1,0 +1,32 @@
+﻿extends layout
+
+block content
+    h1= title
+    p Welcome to #{title}
+
+    div#loginPanel
+        div#usernameSection
+            span User: 
+            input#username(type="text", name="username")
+        div#pwdSection
+            Span Pwd: 
+            input#pwd(type="password", name="password")
+        div#operationSection
+            button(onclick="onLogin()") Login
+    div#logoutPanel
+        button(onclick="onLogout()") Logout
+
+    button(onclick="onTest()") Test
+
+    button(type="submit" onclick='onUpload()') Upload
+    input(type="file", name='fileUploader', onchange="onSelectedFiles(files)", multiple)
+
+    div#previewSection
+    div.clear_float_left
+    div#resizedPreviewSection
+    div.clear_float_left
+
+    script(src="/javascripts/dependencies/js.cookie.js")
+    script(src="/javascripts/dependencies/jquery.min.js")
+    script(src="/javascripts/dependencies/pica.min.js")
+    script(src="/javascripts/index.js")
