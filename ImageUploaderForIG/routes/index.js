@@ -6,7 +6,7 @@ var instagram = require("instagram-private-api").V1;
 
 /* GET home page. */
 router.get('/', function (req, res) {
-    res.render('index', { title: 'Express' });
+    res.render('index', { title: 'Image Uploader For IG' });
 });
 
 router.post("/upload", function (req, res) {

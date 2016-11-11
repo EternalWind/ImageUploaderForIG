@@ -1,0 +1,2 @@
+C:\Users\y.li\Documents\ImageUploaderForIG\ImageUploaderForIG\obj\Debug\ImageUploaderForIG.njsprojResolveAssemblyReference.cache
+C:\Users\y.li\Documents\ImageUploaderForIG\ImageUploaderForIG\bin\Microsoft.NodejsTools.WebRole.dll

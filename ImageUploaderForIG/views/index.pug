@@ -1,30 +1,39 @@
 ﻿extends layout
 
 block content
-    h1= title
-    p Welcome to #{title}
+    h1.center.aligned.ui.icon.header
+        i.instagram.icon
+        div.content= title
 
-    div#loginPanel
-        div#usernameSection
-            span User: 
+    div#loginPanel.ui.form
+        div#usernameSection.field
+            label User
             input#username(type="text", name="username")
-        div#pwdSection
-            Span Pwd: 
+        div#pwdSection.field
+            label Pwd
             input#pwd(type="password", name="password")
         div#operationSection
-            button(onclick="onLogin()") Login
+            button.ui.button.olive.fluid(onclick="onLogin()") Login
     div#logoutPanel
-        button(onclick="onLogout()") Logout
+        button.ui.olive.button.fluid(onclick="onLogout()") Logout
 
-    button(onclick="onTest()") Test
+    div#operationPanel
+         div.ui.horizontal.divider OR
 
-    button(type="submit" onclick='onUpload()') Upload
-    input(type="file", name='fileUploader', onchange="onSelectedFiles(files)", multiple)
+         div.ui.buttons.fluid
+            label.ui.teal.attached.button(for="file") Open File
+                input#file(type="file", style="display:none", name='fileUploader', onchange="onSelectedFiles(files)", multiple)
+            div.or
+            button.ui.orange.positive.attached.button(type="submit", onclick='onUpload()') Upload
 
-    div#previewSection
-    div.clear_float_left
-    div#resizedPreviewSection
-    div.clear_float_left
+    div.ui.segment#previewPanel
+        h2.ui.right.floated.header Selected Photos
+        div.ui.clearing.divider
+
+        div#previewSection
+        div.clear_float_left
+        div#resizedPreviewSection
+        div.clear_float_left
 
     script(src="/javascripts/dependencies/js.cookie.js")
     script(src="/javascripts/dependencies/jquery.min.js")
