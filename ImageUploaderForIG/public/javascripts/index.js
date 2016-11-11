@@ -39,12 +39,19 @@ function onUpload() {
         var imgCount = origImgs.length;
         var currentImgIndex = 0;
 
-        for (var i = 0; i < imgCount; ++i) {
-            resizedPreviewSection.innerHTML += "<div class='img'><span class='img_vertical_alignment_helper'></span><canvas width='"
-                + origImgs[i].width + "' height='" + origImgs[i].height + "'></canvas></div>";
-        }
+        var resizedImgs = [];
 
-        var resizedImgs = resizedPreviewSection.getElementsByTagName("canvas");
+        for (var i = 0; i < imgCount; ++i) {
+            var aspect_ratio = origImgs[i].width / origImgs[i].height;
+            var resizingWidth = aspect_ratio >= 1.0 ? 1024 : 1024 * aspect_ratio;
+            var resizingHeight = aspect_ratio >= 1.0 ? 1024 / aspect_ratio : 1024;
+
+            var canvas = document.createElement("canvas");
+            canvas.width = resizingWidth;
+            canvas.height = resizingHeight;
+
+            resizedImgs.push(canvas);
+        }
 
         // Resize the images!
         if (currentImgIndex < imgCount) {
@@ -173,9 +180,13 @@ function toggleLoginPanel(is_enabled) {
     if (is_enabled) {
         $("#loginPanel").show();
         $("#logoutPanel").hide();
+        $("#operationPanel").hide();
+        $("#previewPanel").hide();
     } else {
         $("#loginPanel").hide();
         $("#logoutPanel").show();
+        $("#operationPanel").show();
+        $("#previewPanel").show();
     }
 }
 
