@@ -26,8 +26,16 @@ block content
             div.or
             button.ui.orange.positive.attached.button(type="submit", onclick='onUpload()') Upload
 
+    div.ui.segment#generalCaptionPanel
+        h2.ui.center.aligned.header Caption
+        div.ui.clearing.divider
+
+        div.ui.form
+            div.field
+                textarea#generalCaption(row="2")
+
     div.ui.segment#previewPanel
-        h2.ui.right.floated.header Selected Photos
+        h2.ui.center.aligned.header Selected Photos
         div.ui.clearing.divider
 
         div#previewSection

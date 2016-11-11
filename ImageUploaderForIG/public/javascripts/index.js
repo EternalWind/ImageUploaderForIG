@@ -80,6 +80,7 @@ function onUpload() {
 
                     var request = getBasicRequestObj();
                     request.imgs = imgDataUrls;
+                    request.generalCaption = $("#generalCaption").val().replace("\n", "<br/>");
 
                     // To the server!
                     $.ajax({
@@ -182,11 +183,13 @@ function toggleLoginPanel(is_enabled) {
         $("#logoutPanel").hide();
         $("#operationPanel").hide();
         $("#previewPanel").hide();
+        $("#generalCaptionPanel").hide();
     } else {
         $("#loginPanel").hide();
         $("#logoutPanel").show();
         $("#operationPanel").show();
         $("#previewPanel").show();
+        $("#generalCaptionPanel").show();
     }
 }
 

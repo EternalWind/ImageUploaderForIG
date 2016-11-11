@@ -11,6 +11,7 @@ router.get('/', function (req, res) {
 
 router.post("/upload", function (req, res) {
     var img_count = req.body.imgs.length;
+    var general_caption = req.body.generalCaption.replace("<br/>", "\n");
 
     for (var i = 0; i < img_count; ++i) {
         img_helpers.saveImgDataUrl("img" + i, req.body.imgs[i]);
@@ -30,7 +31,7 @@ router.post("/upload", function (req, res) {
             })
             .then(function (upload) {
                 console.log("Upload Id: " + upload.params.uploadId);
-                return instagram.Media.configurePhoto(session, upload.params.uploadId, "no." + idx);
+                return instagram.Media.configurePhoto(session, upload.params.uploadId, general_caption);
             })
             .then(function (medium) {
                 console.log("Medium params: " + medium.params);
