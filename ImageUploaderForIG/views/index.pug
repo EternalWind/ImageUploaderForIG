@@ -1,6 +1,7 @@
 ﻿extends layout
 
 block content
+
     h1.center.aligned.ui.icon.header
         i.instagram.icon
         div.content= title
@@ -17,31 +18,75 @@ block content
     div#logoutPanel
         button.ui.olive.button.fluid(onclick="onLogout()") Logout
 
-    div#operationPanel
+    div.operationPanel
          div.ui.horizontal.divider OR
 
          div.ui.buttons.fluid
-            label.ui.teal.attached.button(for="file") Open File
+            label.ui.teal.attached.button(for="file")
+                i.icon.file.outline
+                | Open File
                 input#file(type="file", style="display:none", name='fileUploader', onchange="onSelectedFiles(files)", multiple)
-            div.or
-            button.ui.orange.positive.attached.button(type="submit", onclick='onUpload()') Upload
+            button.ui.positive.attached.button(type="submit", onclick='onUpload()') 
+                i.icon.cloud.upload
+                | Upload
 
     div.ui.segment#generalCaptionPanel
-        h2.ui.center.aligned.header Caption
+        h2.ui.center.aligned.header Caption Template
         div.ui.clearing.divider
 
         div.ui.form
             div.field
                 textarea#generalCaption(row="2")
 
+    div.operationPanel.ui.buttom.attached.red.button(onclick="onApplyCaptionTemplate()")
+        i.icon.arrow.down
+        | Apply
+
     div.ui.segment#previewPanel
         h2.ui.center.aligned.header Selected Photos
         div.ui.clearing.divider
 
-        div#previewSection
+        div#previewSection.ui.cards
         div.clear_float_left
-        div#resizedPreviewSection
-        div.clear_float_left
+
+    div.operationPanel
+        div.fluid.ui.positive.button(onclick="onUpload()")
+            i.cloud.upload.icon
+            | Upload
+
+    br
+
+    div.ui.basic.modal.confirmation
+        div.ui.icon.header
+             i.icon.arrow.down
+             | Applying Caption Template
+        div.content
+            p By applying the caption template, captions for all the selected images below will be reset with the template. Are you sure?
+        div.actions
+            div.ui.cancel.red.basic.inverted.button
+                i.remove.icon
+                | No
+            div.ui.ok.green.inverted.button
+                i.checkmark.icon
+                | Yes
+
+    div.ui.modal.captionEditor
+        div.ui.icon.header
+            div.image
+                i.edit.icon
+            div.header Edit Caption
+        div.content
+             div.ui.segment#generalCaptionPanel
+                div.ui.form
+                    div.field
+                        textarea.individualCaption(row="2")
+        div.actions
+            div.ui.cancel.red.button
+                i.remove.icon
+                span No
+            div.ui.positive.ok.labeled.icon.button
+                i.checkmark.icon
+                span Yes
 
     script(src="/javascripts/dependencies/js.cookie.js")
     script(src="/javascripts/dependencies/pica.min.js")

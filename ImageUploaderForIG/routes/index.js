@@ -11,7 +11,6 @@ router.get('/', function (req, res) {
 
 router.post("/upload", function (req, res) {
     var img_count = req.body.imgs.length;
-    var general_caption = req.body.generalCaption.replace("<br/>", "\n");
 
     for (var i = 0; i < img_count; ++i) {
         img_helpers.saveImgDataUrl("img" + i, req.body.imgs[i]);
@@ -31,7 +30,9 @@ router.post("/upload", function (req, res) {
             })
             .then(function (upload) {
                 console.log("Upload Id: " + upload.params.uploadId);
-                return instagram.Media.configurePhoto(session, upload.params.uploadId, general_caption);
+                var caption = req.body.captions[idx].replace(/<br>/g, "\n");
+
+                return instagram.Media.configurePhoto(session, upload.params.uploadId, caption);
             })
             .then(function (medium) {
                 console.log("Medium params: " + medium.params);
@@ -39,11 +40,13 @@ router.post("/upload", function (req, res) {
             });
     }
 
-    result = {
-        msg: "ok!"
-    };
+    processChain.then(function () {
+        result = {
+            msg: "ok!"
+        };
 
-    res.send(result);
+        res.send(result);
+    });
 });
 
 function login(user, pwd) {
@@ -63,23 +66,17 @@ router.post("/login", function (req, res) {
         });
 });
 
-router.post("/test", function (req, res) {
+router.post("/logout", function (req, res) {
     login(req.body.user, req.body.pwd)
-        .catch(function (e) {
-            console.log("Error! " + e);
-        })
-        .then(function (session) {
-            return [session, instagram.Account.searchForUser(session, "instagram")];
-        })
-        .spread(function (session, account) {
-            console.log("The account id for instagram is " + account.id);
-
-            result = {
-                msg: "The account id for instagram is " + account.id
-            };
-
-            res.send(result);
-            });
-});
+    .then(function (session) {
+        return session.destroy();
+    })
+    .then(function () {
+        res.send(
+        {
+            status: "ok"
+        });
+    });
+})
 
 module.exports = router;
