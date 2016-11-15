@@ -10,6 +10,9 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var Promise = require("bluebird");
+Promise.promisifyAll(require("fs"));
+
 var app = express();
 
 // view engine setup

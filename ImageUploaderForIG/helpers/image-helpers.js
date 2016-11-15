@@ -8,6 +8,6 @@
         var data = imgDataUrl.replace(/^data:image\/\w+;base64,/, "");
         var buf = new Buffer(data, "base64");
 
-        fs.writeFile(file_name + "." + ext, buf);
+        return fs.writeFileAsync(file_name + "." + ext, buf);
     }
 };

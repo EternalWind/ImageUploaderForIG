@@ -11,16 +11,23 @@ router.get('/', function (req, res) {
 
 router.post("/upload", function (req, res) {
     var img_count = req.body.imgs.length;
+    var processChain = {};
+    processChain.then = function (func) {
+        return func();
+    };
 
     for (var i = 0; i < img_count; ++i) {
-        img_helpers.saveImgDataUrl("img" + i, req.body.imgs[i]);
+        processChain = processChain.then(function () {
+            return img_helpers.saveImgDataUrl("img" + i, req.body.imgs[i])
+        });
     }
 
     var session = {};
-    var processChain = login(req.body.user, req.body.pwd)
-        .then(function (s) {
-            session = s;
-        });
+    processChain = processChain.then(function () {
+        return login(req.body.user, req.body.pwd);
+    }).then(function (s) {
+        session = s;
+    });
     var idx = 0;
 
     for (var j = 0; j < img_count; ++j) {
