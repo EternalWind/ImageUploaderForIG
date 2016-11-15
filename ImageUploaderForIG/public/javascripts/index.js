@@ -29,130 +29,183 @@ function onSelectedFiles(files) {
     }
 }
 
-function onUpload() {
-    var previewSection = document.getElementById("previewSection");
+function onUpload(ele) {
+    if (toggleLoadingFor(".uploadBtn", true)) {
+        var previewSection = document.getElementById("previewSection");
+        var needToWaitForServer = false;
 
-    if (previewSection) {
-        var origImgs = previewSection.getElementsByTagName("img");
-        var imgCount = origImgs.length;
-        var currentImgIndex = 0;
+        if (previewSection) {
+            var origImgs = previewSection.getElementsByTagName("img");
+            var imgCount = origImgs.length;
+            var currentImgIndex = 0;
 
-        var resizedImgs = [];
-        
-        var captionBoxes = $(".hiddenCaption");
+            var resizedImgs = [];
 
-        // Create in-memory canvases to resize the images with appropriate sizes.
-        for (var i = 0; i < imgCount; ++i) {
-            var aspect_ratio = origImgs[i].width / origImgs[i].height;
-            var resizingWidth = aspect_ratio >= 1.0 ? 1024 : 1024 * aspect_ratio;
-            var resizingHeight = aspect_ratio >= 1.0 ? 1024 / aspect_ratio : 1024;
+            var captionBoxes = $(".hiddenCaption");
 
-            var canvas = document.createElement("canvas");
-            canvas.width = resizingWidth;
-            canvas.height = resizingHeight;
+            // Create in-memory canvases to resize the images with appropriate sizes.
+            for (var i = 0; i < imgCount; ++i) {
+                var aspect_ratio = origImgs[i].width / origImgs[i].height;
+                var resizingWidth = aspect_ratio >= 1.0 ? 1024 : 1024 * aspect_ratio;
+                var resizingHeight = aspect_ratio >= 1.0 ? 1024 / aspect_ratio : 1024;
 
-            resizedImgs.push(canvas);
-        }
+                var canvas = document.createElement("canvas");
+                canvas.width = resizingWidth;
+                canvas.height = resizingHeight;
 
-        // Resize the images!
-        if (currentImgIndex < imgCount) {
-            var callback = function (err) {
-                if (err) {
-                    alert(err);
-                }
-
-                currentImgIndex++;
-                if (currentImgIndex < imgCount) {
-                    pica.resizeCanvas(origImgs[currentImgIndex], resizedImgs[currentImgIndex],
-                        {
-                            quality: 3,
-                            alpha: false,
-                            unsharpAmount: 0,
-                            unsharpRadius: 0.5,
-                            unsharpThreshold: 0
-                        },
-                        callback);
-                } else {
-                    // Prepare the image data to be sent to the server.
-                    var imgDataUrls = [];
-                    for (var i = 0; i < imgCount; ++i) {
-                        imgDataUrls.push(resizedImgs[i].toDataURL("image/jpeg"));
-                    }
-
-                    var captions = [];
-                    for (var i = 0; i < imgCount; ++i) {
-                        captions.push($(captionBoxes[i]).html());
-                    }
-
-                    var request = getBasicRequestObj();
-                    request.imgs = imgDataUrls;
-                    request.captions = captions;
-
-                    // To the server!
-                    $.ajax({
-                        url: "/upload",
-                        type: "POST",
-                        data: JSON.stringify(request),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function (result) {
-                            alert(result.msg);
-                        },
-                        error: function (req, status, error) {
-                            alert("Error! " + req + " || " + status + " || " + error);
-                        }
-                    });
-                }
+                resizedImgs.push(canvas);
             }
 
-            pica.resizeCanvas(origImgs[currentImgIndex], resizedImgs[currentImgIndex],
-                {
-                    quality: 3,
-                    alpha: false,
-                    unsharpAmount: 0,
-                    unsharpRadius: 0.5,
-                    unsharpThreshold: 0
-                },
-                callback);
+            // Resize the images!
+            if (currentImgIndex < imgCount) {
+                var callback = function (err) {
+                    if (err) {
+                        alert(err);
+                    }
+
+                    currentImgIndex++;
+                    if (currentImgIndex < imgCount) {
+                        pica.resizeCanvas(origImgs[currentImgIndex], resizedImgs[currentImgIndex],
+                            {
+                                quality: 3,
+                                alpha: false,
+                                unsharpAmount: 0,
+                                unsharpRadius: 0.5,
+                                unsharpThreshold: 0
+                            },
+                            callback);
+                    } else {
+                        // Prepare the image data to be sent to the server.
+                        var imgDataUrls = [];
+                        for (var i = 0; i < imgCount; ++i) {
+                            imgDataUrls.push(resizedImgs[i].toDataURL("image/jpeg"));
+                        }
+
+                        var captions = [];
+                        for (var i = 0; i < imgCount; ++i) {
+                            captions.push($(captionBoxes[i]).html());
+                        }
+
+                        var request = getBasicRequestObj();
+                        request.imgs = imgDataUrls;
+                        request.captions = captions;
+
+                        // To the server!
+                        $.ajax({
+                            url: "/upload",
+                            type: "POST",
+                            data: JSON.stringify(request),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (result) {
+                                toggleLoadingFor(".uploadBtn", false);
+                                
+                                messageBox("Upload Completed", imgCount + " images have been uploaded to Instagram!");
+                                previewSection.innerHTML = "";
+                            },
+                            error: function (jqXHR) {
+                                toggleLoadingFor(".uploadBtn", false);
+
+                                var errObj = JSON.parse(jqXHR.responseText);
+                                messageBox(errObj.name, errObj.message);
+                            }
+                        });
+                    }
+                }
+
+                needToWaitForServer = true;
+
+                pica.resizeCanvas(origImgs[currentImgIndex], resizedImgs[currentImgIndex],
+                    {
+                        quality: 3,
+                        alpha: false,
+                        unsharpAmount: 0,
+                        unsharpRadius: 0.5,
+                        unsharpThreshold: 0
+                    },
+                    callback);
+            }
+        }
+
+        if (!needToWaitForServer) {
+            toggleLoadingFor(".uploadBtn", false);
         }
     }
 }
 
-function onLogin() {
-    var user = $("#username").val();
-    var pwd = $("#pwd").val();
+function toggleLoadingFor(ele, isLoading) {
+    if (isLoading) {
+        if (!$(ele).hasClass("loading")) {
+            $(ele).addClass("loading");
 
-    $.ajax({
-        url: "/login",
-        type: "POST",
-        data:
-        JSON.stringify({
-            user: user,
-            pwd: pwd
-        }),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-            toggleLoginPanel(false);
-            saveUserInfoToCookies(user, pwd);
+            return true;
         }
-    });
+    } else {
+        if ($(ele).hasClass("loading")) {
+            $(ele).removeClass("loading");
+
+            return true;
+        }
+    }
+
+    return false;
 }
 
-function onLogout() {
-    var request = getBasicRequestObj();
+function onLogin(ele) {
+    if (toggleLoadingFor(ele, true)) {
+        var user = $("#username").val();
+        var pwd = $("#pwd").val();
 
-    $.ajax({
-        url: "/logout",
-        type: "POST",
-        data: JSON.stringify(request),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-            clearUserInfoFromCookies();
-            toggleLoginPanel(true);
-        }
-    });
+        $.ajax({
+            url: "/login",
+            type: "POST",
+            data:
+            JSON.stringify({
+                user: user,
+                pwd: pwd
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                toggleLoginPanel(false);
+                saveUserInfoToCookies(user, pwd);
+
+                toggleLoadingFor(ele, false);
+            },
+            error: function (jqXHR) {
+                toggleLoadingFor(ele, false);
+
+                var errObj = JSON.parse(jqXHR.responseText);
+                messageBox(errObj.name, errObj.message);
+            }
+        });
+    }
+}
+
+function onLogout(ele) {
+    if (toggleLoadingFor(ele, true)) {
+        var request = getBasicRequestObj();
+
+        $.ajax({
+            url: "/logout",
+            type: "POST",
+            data: JSON.stringify(request),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                clearUserInfoFromCookies();
+                toggleLoginPanel(true);
+
+                toggleLoadingFor(ele, false);
+            },
+            error: function (jqXHR) {
+                toggleLoadingFor(ele, false);
+                
+                var errObj = JSON.parse(jqXHR.responseText);
+                messageBox(errObj.name, errObj.message);
+            }
+        });
+    }
 }
 
 function onClickImg(event) {
@@ -220,6 +273,14 @@ function onConfirmApplyingCaptionTemplate(ele) {
     $(".hiddenCaption").html($("#generalCaption").val().replace(/\n/g, "<br>"));
 }
 
+function messageBox(title, body) {
+    var dialog = $(".ui.basic.modal.messageBox");
+    dialog.find("#messageBoxTitle").html(title);
+    dialog.find("#messageBoxBody").html(body);
+
+    dialog.modal("show");
+}
+
 $(function () {
     var user = Cookies.get("user");
     var pwd = Cookies.get("pwd");
@@ -235,5 +296,9 @@ $(function () {
     $(".ui.basic.modal.confirmation").modal({
         blurring: true,
         onApprove: onConfirmApplyingCaptionTemplate
+    });
+
+    $(".ui.basic.modal.messageBox").modal({
+        blurring: true
     });
 });

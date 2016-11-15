@@ -44,6 +44,9 @@ router.post("/upload", function (req, res) {
             .then(function (medium) {
                 console.log("Medium params: " + medium.params);
                 idx++;
+            })
+            .catch(function (err) {
+                ajaxError(res, 500, err);
             });
     }
 
@@ -63,8 +66,17 @@ function login(user, pwd) {
     return instagram.Session.create(device, storage, user, pwd);
 }
 
+function ajaxError(res, statusCode, error) {
+    res.status(statusCode);
+    res.send(error);
+    throw error;
+}
+
 router.post("/login", function (req, res) {
     login(req.body.user, req.body.pwd)
+        .catch(function (err) {
+            ajaxError(res, 500, err);
+        })
         .then(function (session) {
             res.send(
                 {
@@ -77,6 +89,9 @@ router.post("/logout", function (req, res) {
     login(req.body.user, req.body.pwd)
     .then(function (session) {
         return session.destroy();
+    })
+    .catch(function (err) {
+        ajaxError(res, 500, err);
     })
     .then(function () {
         res.send(

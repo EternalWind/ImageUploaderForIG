@@ -14,9 +14,9 @@ block content
             label Pwd
             input#pwd(type="password", name="password")
         div#operationSection
-            button.ui.button.olive.fluid(onclick="onLogin()") Login
+            button.ui.button.olive.fluid(onclick="onLogin(this)") Login
     div#logoutPanel
-        button.ui.olive.button.fluid(onclick="onLogout()") Logout
+        button.ui.olive.button.fluid(onclick="onLogout(this)") Logout
 
     div.operationPanel
          div.ui.horizontal.divider OR
@@ -26,7 +26,7 @@ block content
                 i.icon.file.outline
                 | Open File
                 input#file(type="file", style="display:none", name='fileUploader', onchange="onSelectedFiles(files)", multiple)
-            button.ui.positive.attached.button(type="submit", onclick='onUpload()') 
+            button.uploadBtn.ui.positive.attached.button(type="submit", onclick='onUpload(this)') 
                 i.icon.cloud.upload
                 | Upload
 
@@ -50,11 +50,18 @@ block content
         div.clear_float_left
 
     div.operationPanel
-        div.fluid.ui.positive.button(onclick="onUpload()")
+        div.uploadBtn.fluid.ui.positive.button(onclick="onUpload()")
             i.cloud.upload.icon
             | Upload
 
     br
+
+    div.ui.basic.modal.messageBox
+        div.ui.icon.header
+            i.icon.warning
+            span#messageBoxTitle
+        div.content
+            p#messageBoxBody
 
     div.ui.basic.modal.confirmation
         div.ui.icon.header
